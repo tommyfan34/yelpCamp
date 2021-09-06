@@ -5,7 +5,7 @@
             <h4 class="alert-heading"><%= err.message %> </h4>
             <p>Aww Something went wrong</p>
             <hr>
-            <p class="mb-0">Figure out what you did wrong</p>
+            <p class="mb-0"><%= err.stack %> </p>
         </div>
     </div>
 </div>
