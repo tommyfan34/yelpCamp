@@ -4,6 +4,7 @@ const methodOverride = require('method-override')
 const ejsMate = require('ejs-mate')
 const ExpressError = require('./utils/ExpressError')
 const session = require('express-session')
+const flash = require("connect-flash")
 
 const path = require('path')
 
@@ -30,12 +31,24 @@ app.use(express.urlencoded({ extended: true }))  // to parse the submitted form
 app.use(methodOverride('_method'))  // fake PATCH / DELETE request
 app.use(express.static(path.join(__dirname, 'public')))
 
-// const sessionConfig = {
-//     secret = 'thisshoulebeabettersecret!',
-//     resave: false,
-//     saveUninitialized: true
-// }
-// app.use(session(sessionConfig))
+const sessionConfig = {
+    secret: 'thisshoulebeabettersecret!',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        httpOnly: true
+    }
+}
+app.use(session(sessionConfig))
+app.use(flash())
+
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success')   // 将success flash存储为本地变量
+    res.locals.error = req.flash('error')
+    next()
+})
 
 
 // campgrpound and review RESTful CURD router
