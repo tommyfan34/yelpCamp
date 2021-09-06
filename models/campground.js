@@ -18,7 +18,7 @@ const CampGroundSchema = new Schema({
     ]
 });
 
-// delete review middleware, if a campground is deleted, then all associated reviews are deleted
+// delete review mongoose middleware, if a campground is deleted, then all associated reviews are deleted
 CampGroundSchema.post('findOneAndDelete', async function (doc) {
     if (doc) {
         await Review.remove({
