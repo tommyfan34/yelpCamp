@@ -16,9 +16,12 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const User = require('./models/user')
 const mongoSanitize = require('express-mongo-sanitize')
+const helmet = require('helmet')
+const MongoDBStore = require("connect-mongo")  // store session info on mongo Atlas instead of memory
 
+const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp'
 
-mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+mongoose.connect(dbUrl, {
 })
 const db = mongoose.connection
 db.on("error", console.error.bind(console, "connection error"))
@@ -38,9 +41,24 @@ app.use(express.urlencoded({ extended: true }))  // to parse the submitted form
 app.use(methodOverride('_method'))  // fake PATCH / DELETE request
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(mongoSanitize())  // prevent from mongo injection
+app.use(helmet({contentSecurityPolicy: false}))  // html secure middleware
+
+
+const secret = process.env.SECRET || 'thisisdevelopmentsecret'
+const store = MongoDBStore.create({
+    mongoUrl: dbUrl,
+    secret: secret,
+    ttl: 24 * 3600
+})
+
+store.on("error", function (e) {
+    console.log("SESSION STORE ERROR", e)
+})
 
 const sessionConfig = {
-    secret: 'thisshoulebeabettersecret!',
+    store: store,
+    name: "notDefault",
+    secret: secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
