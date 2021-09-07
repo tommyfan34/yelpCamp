@@ -6,7 +6,8 @@ const geocoder = mbxGeocoding({accessToken: mapBoxToken})
 
 module.exports.index = async(req, res) => {
     const campgrounds = await Campground.find({})
-    res.render('campgrounds/index', { campgrounds })
+    const isIndex = true
+    res.render('campgrounds/index', { campgrounds,  isIndex})
 } 
 
 module.exports.newForm = (req, res) => {

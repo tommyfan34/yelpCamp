@@ -15,6 +15,7 @@ const userRoutes = require('./routes/users')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const User = require('./models/user')
+const mongoSanitize = require('express-mongo-sanitize')
 
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
@@ -36,6 +37,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.urlencoded({ extended: true }))  // to parse the submitted form
 app.use(methodOverride('_method'))  // fake PATCH / DELETE request
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(mongoSanitize())  // prevent from mongo injection
 
 const sessionConfig = {
     secret: 'thisshoulebeabettersecret!',
