@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config()  // STORE THE CLOUDINARY API AND KEY TO .ENV
+}
 const express = require('express')
 const mongoose = require('mongoose')
 const methodOverride = require('method-override')
