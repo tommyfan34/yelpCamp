@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const Campground = require('../models/campground')
 const cities = require('./cities')
 const {descriptors, places} = require('./seedHelpers')
+const imageCollection = require('./campgrounds')
 
 mongoose.connect(process.env.DB_URL, {})
 const db = mongoose.connection
@@ -20,6 +21,16 @@ const seedDB = async () => {
     for (let i = 0; i < 200; i++) {
         const random = Math.floor(Math.random() * 1000);
         const price = Math.floor(Math.random() * 30) + 10;
+        const imgNums = Math.floor(Math.random() * 3) + 1
+        let imgs = []
+        for (let i = 0; i < imgNums; i++) {
+          const urlStr = sample(imageCollection).url
+          const fileName = urlStr.split('/')[urlStr.split('/').length - 1].split('.')[0]
+          imgs.push({
+            url: urlStr,
+            filename: fileName
+          })
+        }
         const camp = new Campground({
             author: "6137b821266ef30fe8aeeed7",
             location: `${cities[random].city}, ${cities[random].state}`,
@@ -29,20 +40,7 @@ const seedDB = async () => {
             geometry: { type: 'Point',
                         coordinates: [ cities[random].longitude, cities[random].latitude ] 
                       },
-            images: [
-                {
-                  url: 'https://res.cloudinary.com/dubix1non/image/upload/v1630964322/YelpCamp/dukinz83kikee8nryy7e.jpg',
-                  filename: 'YelpCamp/dukinz83kikee8nryy7e',
-                },
-                {
-                  url: 'https://res.cloudinary.com/dubix1non/image/upload/v1630964322/YelpCamp/ogi5hqn4hsdew8kshuk3.jpg',
-                  filename: 'YelpCamp/ogi5hqn4hsdew8kshuk3',
-                },
-                {
-                  url: 'https://res.cloudinary.com/dubix1non/image/upload/v1630964323/YelpCamp/voceoay9e7qbz9yiavay.jpg',
-                  filename: 'YelpCamp/voceoay9e7qbz9yiavay',
-                }
-              ],
+            images: imgs
         })
         await camp.save();
     }
