@@ -1,9 +1,12 @@
+if (process.env.NODE_ENV !== "production") {
+  require('dotenv').config()  // STORE THE CLOUDINARY API AND KEY TO .ENV
+}
 const mongoose = require('mongoose')
 const Campground = require('../models/campground')
 const cities = require('./cities')
 const {descriptors, places} = require('./seedHelpers')
 
-mongoose.connect(process.env.DB_URL)
+mongoose.connect(process.env.DB_URL, {})
 const db = mongoose.connection
 db.on("error", console.error.bind(console, "connection error:"))
 db.once("open", () => {
